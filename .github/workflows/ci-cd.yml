@@ -65,11 +65,15 @@ jobs:
   sonarcloud:
     runs-on: ubuntu-latest
     needs: [test-backend, test-frontend]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up JDK 21
+      # ANALYSE BACKEND 
+      - name: Set up JDK 21 for backend analysis
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -89,9 +93,31 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Bild and analyse backend
-        env: 
+      - name: Build and analyze backend
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: ./back
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Antoine-Heu_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD -Dsonar.organization=antoine-heu
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Antoine-Heu_BobApp_backend -Dsonar.organization=antoine-heu
+
+      # ANALYSE FRONTEND 
+      - name: Set up Node.js for frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Install frontend dependencies
+        working-directory: ./front
+        run: npm ci
+
+      - name: Run frontend tests with coverage
+        working-directory: ./front
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: SonarCloud Scan for Frontend
+        uses: SonarSource/sonarqube-scan-action@v3
+        with:
+          projectBaseDir: front
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
