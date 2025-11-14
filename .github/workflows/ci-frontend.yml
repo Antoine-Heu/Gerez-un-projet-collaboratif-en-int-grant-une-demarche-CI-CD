@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+    paths: [ 'front/**', '.github/workflows/**' ]
   pull_request:
     branches:
       - main
