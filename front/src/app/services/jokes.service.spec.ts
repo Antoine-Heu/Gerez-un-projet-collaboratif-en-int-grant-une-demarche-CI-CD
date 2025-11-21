@@ -14,6 +14,7 @@ describe('JokesService', () => {
       service = TestBed.get(JokesService);
   });
 
+  // my awesome comment
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
