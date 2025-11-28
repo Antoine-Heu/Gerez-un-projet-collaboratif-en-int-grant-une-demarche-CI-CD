@@ -26,7 +26,7 @@ Build the container:
 
 Start the container:
 
-> docker run -p 8080:80 --name bobapp-front -d antoinelm/bobapp-front:latest
+> docker run -p 80:80 --name bobapp-front -d antoinelm/bobapp-front:latest
 
 ## Back-end
 
@@ -54,4 +54,4 @@ Build the container:
 
 Start the container:
 
-> ddocker run -p 8080:8080 --name bobapp-back -d antoinelm/bobapp-back:latest
+> docker run -p 8080:8080 --name bobapp-back -d antoinelm/bobapp-back:latest
